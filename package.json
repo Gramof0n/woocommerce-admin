@@ -5,21 +5,72 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "postinstall": "./node_modules/.bin/rn-nodeify --install \"crypto,vm,stream,process\" --hack --yarn"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.13.0",
+    "@react-native-community/async-storage": "^1.12.1",
+    "@react-native-community/masked-view": "0.1.10",
+    "@react-navigation/drawer": "^5.12.5",
+    "@react-navigation/native": "^5.9.4",
+    "@react-navigation/stack": "^5.14.4",
+    "@types/crypto-js": "^4.0.1",
+    "axios": "^0.21.1",
+    "axios-oauth-1.0a": "^0.2.1",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.0.0",
+    "events": "^3.3.0",
     "expo": "~41.0.1",
     "expo-status-bar": "~1.0.4",
+    "formik": "^2.2.6",
+    "oauth-1.0a": "^2.2.6",
+    "process": "0.11.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
-    "react-native-web": "~0.13.12"
+    "react-native-crypto": "2.1.0",
+    "react-native-gesture-handler": "~1.10.2",
+    "react-native-randombytes": "3.0.0",
+    "react-native-reanimated": "~2.1.0",
+    "react-native-render-html": "^5.1.0",
+    "react-native-safe-area-context": "3.2.0",
+    "react-native-screens": "~3.0.0",
+    "react-native-vector-icons": "^8.1.0",
+    "react-native-web": "~0.13.12",
+    "react-native-webview": "11.2.3",
+    "readable-stream": "1.0.33",
+    "rn-nodeify": "^10.3.0",
+    "stream": "^0.0.2",
+    "stream-browserify": "^3.0.0",
+    "vm-browserify": "0.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
+    "@types/react-native-vector-icons": "^6.4.6",
     "typescript": "~4.0.0"
   },
-  "private": true
+  "private": true,
+  "react-native": {
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "vm": "vm-browserify",
+    "crypto": "react-native-crypto"
+  },
+  "browser": {
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "vm": "vm-browserify",
+    "crypto": "react-native-crypto"
+  }
 }
