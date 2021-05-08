@@ -37,3 +37,23 @@ export const get = async (path: string) => {
     console.log(err);
   }
 };
+
+export const post = async (path: string, body: object): Promise<boolean> => {
+  try {
+    const request = {
+      url: `${config.BASE_URL}${config.WC_API_URL}${path}`,
+      method: "POST",
+    };
+
+    const oauth = getOAuth().authorize(request);
+
+    axios.post(request.url, body, {
+      params: oauth,
+    });
+    return true;
+  } catch (err) {
+    console.log("greska");
+    console.log(err);
+    return false;
+  }
+};

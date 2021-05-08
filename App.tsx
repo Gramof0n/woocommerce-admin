@@ -5,6 +5,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import AddProduct from "./pages/AddProduct";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -21,6 +22,11 @@ export default function App() {
           name="Home"
           component={Home}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddProduct"
+          component={AddProduct}
+          options={{ headerShown: true }}
         />
       </Stack.Navigator>
     </NavigationContainer>

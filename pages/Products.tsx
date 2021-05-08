@@ -1,11 +1,15 @@
+import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import FloatingButton from "../components/FloatingButton";
 import ProductDisplay from "../components/ProductDisplay";
 import { get } from "../utils/apiCalls";
 
-const Products = () => {
+type Props = DrawerContentComponentProps & {};
+
+const Products = (props: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<any[]>([]);
   useFocusEffect(
@@ -17,32 +21,42 @@ const Products = () => {
   );
 
   async function getProducts() {
-    const res = await get("products");
+    const res = await get("products?per_page=100");
     setIsLoading(false);
-    //console.log(res?.data);
-
+    console.log("Duzina res " + res?.data.length);
     setProducts(res?.data);
   }
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
         <View style={styles.container}>
-          <Text>Loading...</Text>
+          <ActivityIndicator size="large" color="black" />
         </View>
       ) : (
-        <ScrollView style={{ flex: 1 }}>
-          {products.map((product, index) => {
-            return (
-              <ProductDisplay
-                key={index}
-                name={product.name}
-                source={{ uri: product.images[0].src, width: 200, height: 200 }}
-                description={product.description}
-                price={product.price}
-              />
-            );
-          })}
-        </ScrollView>
+        <View style={{ flex: 1 }}>
+          <ScrollView style={{ flex: 1 }}>
+            {products.map((product, index) => {
+              return (
+                <ProductDisplay
+                  key={index}
+                  name={product.name}
+                  source={{
+                    uri: product.images[0].src,
+                    width: 200,
+                    height: 200,
+                  }}
+                  description={product.description}
+                  price={product.price}
+                />
+              );
+            })}
+          </ScrollView>
+          <FloatingButton
+            onPress={() => {
+              props.navigation.navigate("AddProduct");
+            }}
+          />
+        </View>
       )}
     </View>
   );

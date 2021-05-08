@@ -6,17 +6,16 @@ type Props = ImageProps & {
   name: string;
   description?: string;
   price?: string;
-  key: number;
 };
 
 const ProductDisplay = (props: Props) => {
   return (
-    <View style={styles.wrapper} key={props.key}>
+    <View style={styles.wrapper}>
       <Image {...props} style={{ marginBottom: 5 }} />
       <View style={{ alignSelf: "center" }}>
         <Text style={styles.title}>{props.name}</Text>
         <Text style={styles.price}>{props.price}€</Text>
-        <Text>{props.description}</Text>
+        <Text style={styles.description}>{props.description}</Text>
       </View>
     </View>
   );
@@ -28,7 +27,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 10,
     backgroundColor: "white",
-    padding: 7,
+    padding: 15,
   },
 
   title: {
@@ -41,6 +40,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     marginBottom: 5,
+  },
+
+  description: {
+    fontSize: 15,
+    fontWeight: "500",
   },
 });
 
