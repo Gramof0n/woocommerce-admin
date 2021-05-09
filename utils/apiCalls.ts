@@ -57,3 +57,43 @@ export const post = async (path: string, body: object): Promise<boolean> => {
     return false;
   }
 };
+
+export const remove = async (path: string) => {
+  try {
+    const request = {
+      url: `${config.BASE_URL}${config.WC_API_URL}${path}`,
+      method: "DELETE",
+    };
+
+    const oauth = getOAuth().authorize(request);
+
+    axios.delete(request.url, {
+      params: oauth,
+    });
+    return true;
+  } catch (err) {
+    console.log("greska");
+    console.log(err);
+    return false;
+  }
+};
+
+export const update = async (path: string, body: object): Promise<boolean> => {
+  try {
+    const request = {
+      url: `${config.BASE_URL}${config.WC_API_URL}${path}`,
+      method: "PUT",
+    };
+
+    const oauth = getOAuth().authorize(request);
+
+    axios.put(request.url, body, {
+      params: oauth,
+    });
+    return true;
+  } catch (err) {
+    console.log("greska");
+    console.log(err);
+    return false;
+  }
+};

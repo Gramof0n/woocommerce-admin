@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import FloatingButton from "../components/FloatingButton";
 import ProductDisplay from "../components/ProductDisplay";
 import { get } from "../utils/apiCalls";
@@ -14,20 +14,22 @@ type Props = DrawerContentComponentProps & {};
 const Products = (props: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<any[]>([]);
+  useEffect(() => {
+    getProducts();
+  }, [isLoading]);
   useFocusEffect(
     React.useCallback(() => {
       setIsLoading(true);
-      console.log("Report");
       getProducts();
       setCategories();
     }, [])
   );
-
-  async function getProducts() {
-    const res = await get("products?per_page=100");
-    setIsLoading(false);
-    console.log("Duzina res " + res?.data.length);
-    setProducts(res?.data);
+  function getProducts() {
+    get("products?per_page=100").then((res) => {
+      setProducts(res?.data);
+      setIsLoading(false);
+      //console.log("Duzina res " + res?.data.length);
+    });
   }
 
   async function setCategories() {
@@ -44,24 +46,33 @@ const Products = (props: Props) => {
           <ScrollView style={{ flex: 1 }}>
             {products.map((product, index) => {
               return (
-                <ProductDisplay
+                <TouchableOpacity
                   key={index}
-                  name={product.name}
-                  source={{
-                    uri:
-                      typeof product.images[0].src === "undefined"
-                        ? "http://www.cre8a.biz/images/shop/placeholder-product-image-500x500.png"
-                        : product.images[0].src,
-                    width: 200,
-                    height: 200,
+                  onPress={() => {
+                    props.navigation.navigate("ProductDetails", { product });
                   }}
-                  description={product.description}
-                  price={product.price}
-                />
+                >
+                  <ProductDisplay
+                    name={product.name}
+                    source={{
+                      uri:
+                        typeof product.images[0].src === "undefined"
+                          ? "http://www.cre8a.biz/images/shop/placeholder-product-image-500x500.png"
+                          : product.images[0].src,
+                      width: 200,
+                      height: 200,
+                    }}
+                    description={product.description}
+                    price={product.price}
+                  />
+                </TouchableOpacity>
               );
             })}
           </ScrollView>
           <FloatingButton
+            bottom={15}
+            right={15}
+            icon="plus"
             onPress={() => {
               props.navigation.navigate("AddProduct");
             }}

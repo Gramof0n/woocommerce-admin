@@ -4,13 +4,22 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-type Props = TouchableOpacityProps & {};
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+type Props = TouchableOpacityProps & {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+  icon: "plus" | "trash-can-outline" | "update";
+};
 
-const FloatingButton = (props: Props) => {
+const FloatingButton = ({ top, bottom, left, right, ...props }: Props) => {
   return (
-    <TouchableOpacity {...props} style={styles.button}>
-      <Icon name="plus" size={40} color="white" />
+    <TouchableOpacity
+      {...props}
+      style={[styles.button, { top: top, bottom: bottom, left, right }]}
+    >
+      <Icon name={props.icon} size={40} color="white" />
     </TouchableOpacity>
   );
 };
@@ -27,10 +36,10 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "black",
-    width: 70,
-    height: 70,
+    width: 50,
+    height: 50,
     borderRadius: 2 * 70 * Math.PI,
-    backgroundColor: "#424242",
+    backgroundColor: "rgba(52, 52, 52, 0.3)",
   },
 });
 export default FloatingButton;

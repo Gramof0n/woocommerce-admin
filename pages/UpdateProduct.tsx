@@ -1,21 +1,38 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/core";
+import { ItemValue } from "@react-native-picker/picker/typings/Picker";
 import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from "@react-navigation/drawer";
+import {
+  DrawerActions,
+  StackActions,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { Formik } from "formik";
 import React, { useCallback, useState } from "react";
-import { Text, View, StyleSheet, ToastAndroid, Platform } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import {
+  Platform,
+  ScrollView,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from "react-native";
 import ComboBox from "../components/ComboBox";
 import InputField from "../components/InputField";
-import { post } from "../utils/apiCalls";
+import { post, update } from "../utils/apiCalls";
 
-type Props = DrawerContentComponentProps<DrawerContentOptions> & {};
+type Props = DrawerContentComponentProps<DrawerContentOptions> & {
+  route: any;
+};
 
-const AddProduct = (props: Props) => {
+const UpdateProduct = (props: Props) => {
   const [categories, setCategories] = useState([]);
+  const product = props.route.params.product;
+
+  console.log("ID " + product.id);
   useFocusEffect(
     useCallback(() => {
       AsyncStorage.getItem("categories").then((res) => {
@@ -27,19 +44,13 @@ const AddProduct = (props: Props) => {
     <ScrollView style={{ padding: 15 }}>
       <Formik
         initialValues={{
-          name: "",
-          categories: [] as any,
-          type: "simple",
-          regular_price: "",
-          description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi`,
-          short_description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod",
-          images: [
-            {
-              src:
-                "http://www.cre8a.biz/images/shop/placeholder-product-image-500x500.png",
-            },
-          ],
+          name: product.name,
+          categories: product.categories,
+          type: product.type,
+          regular_price: product.regular_price,
+          description: product.description,
+          short_description: product.short_description,
+          images: product.images,
         }}
         onSubmit={async (values, { setErrors }) => {
           let good = true;
@@ -55,13 +66,12 @@ const AddProduct = (props: Props) => {
           }
 
           if (good) {
-            console.log(values);
-            const res = await post("products", values);
+            const res = await update(`products/${product.id}`, values);
             if (Platform.OS === "android") {
-              ToastAndroid.show("Successfully added", ToastAndroid.SHORT);
+              ToastAndroid.show("Successfully updated", ToastAndroid.SHORT);
             }
 
-            props.navigation.goBack();
+            props.navigation.navigate("Products");
             console.log(res);
           }
         }}
@@ -89,11 +99,10 @@ const AddProduct = (props: Props) => {
               label="Categories: "
               parameters={categories}
               onValueChange={(value, _) => {
-                console.log(value);
-                const val = { id: value };
-                values.categories[0] = val;
+                console.log(values.categories[0].id);
+                values.categories[0] = { id: value };
               }}
-              selectedValue={values.categories[0]}
+              selectedValue={values.categories[0].id}
             />
             <InputField
               name="regular_price"
@@ -103,6 +112,7 @@ const AddProduct = (props: Props) => {
               onBlur={() => {
                 handleBlur("regular_price");
               }}
+              value={values.regular_price}
             />
             <InputField
               name="description"
@@ -112,6 +122,7 @@ const AddProduct = (props: Props) => {
               onBlur={() => {
                 handleBlur("description");
               }}
+              value={values.description}
             />
             <InputField
               name="short_description"
@@ -121,6 +132,7 @@ const AddProduct = (props: Props) => {
               onBlur={() => {
                 handleBlur("short_description");
               }}
+              value={values.short_description}
             />
             <TouchableOpacity
               style={styles.button}
@@ -128,7 +140,7 @@ const AddProduct = (props: Props) => {
                 handleSubmit();
               }}
             >
-              <Text style={{ color: "white" }}>Add</Text>
+              <Text style={{ color: "white" }}>Update</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -161,4 +173,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddProduct;
+export default UpdateProduct;
