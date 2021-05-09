@@ -1,29 +1,127 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/core";
 import { Formik } from "formik";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import ComboBox from "../components/ComboBox";
 import InputField from "../components/InputField";
+import { post } from "../utils/apiCalls";
+import { categoriesArray } from "../utils/mapCategoriesToArray";
 
 interface Props {}
 
 const AddProduct = (props: Props) => {
+  const [categories, setCategories] = useState([]);
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem("categories").then((res) => {
+        setCategories(JSON.parse(res!));
+      });
+    }, [])
+  );
   return (
-    <ScrollView>
-      <Formik initialValues={{}} onSubmit={() => {}}>
+    <ScrollView style={{ padding: 15 }}>
+      <Formik
+        initialValues={{
+          name: "",
+          categories: [] as any,
+          type: "simple",
+          regular_price: "",
+          description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi`,
+          short_description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod",
+          images: [
+            {
+              src:
+                "http://www.cre8a.biz/images/shop/placeholder-product-image-500x500.png",
+            },
+          ],
+        }}
+        onSubmit={async (values, { setErrors }) => {
+          let good = true;
+          if (values.name === "") {
+            setErrors({ name: "Name must not be empty" });
+            good = false;
+          } else if (
+            parseInt(values.regular_price) <= 0 ||
+            !isFinite(parseInt(values.regular_price))
+          ) {
+            setErrors({ regular_price: "Price must a number larger than 0" });
+            good = false;
+          }
+
+          if (good) {
+            console.log(values);
+            const res = await post("products", values);
+            console.log(res);
+          }
+        }}
+      >
         {({ handleChange, handleBlur, handleSubmit, values }) => (
           <View>
-            <InputField name="name" label="Name:" />
             <InputField
-              name="price"
+              name="name"
+              label="Name:"
+              onChangeText={handleChange("name")}
+              onBlur={handleBlur("name")}
+              value={values.name}
+            />
+            <ComboBox
+              name="type"
+              label="Type: "
+              parameters={[{ label: "Simple", value: "simple" }]}
+              onValueChange={(value, _) => {
+                values.type = value.toString();
+              }}
+              selectedValue={values.type}
+            />
+            <ComboBox
+              name="categories"
+              label="Categories: "
+              parameters={categories}
+              onValueChange={(value, _) => {
+                console.log(value);
+                const val = { id: value };
+                values.categories[0] = val;
+              }}
+              selectedValue={values.categories[0]}
+            />
+            <InputField
+              name="regular_price"
               label="Price:"
               keyboardType="decimal-pad"
+              onChangeText={handleChange("regular_price")}
+              onBlur={() => {
+                handleBlur("regular_price");
+              }}
             />
-            <InputField name="description" label="Description:" multiline />
             <InputField
-              name="shortDescription"
+              name="description"
+              label="Description:"
+              multiline
+              onChangeText={handleChange("description")}
+              onBlur={() => {
+                handleBlur("description");
+              }}
+            />
+            <InputField
+              name="short_description"
               label="Short description:"
               multiline
+              onChangeText={handleChange("short_description")}
+              onBlur={() => {
+                handleBlur("short_description");
+              }}
             />
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                handleSubmit();
+              }}
+            >
+              <Text style={{ color: "white" }}>Add</Text>
+            </TouchableOpacity>
           </View>
         )}
       </Formik>
@@ -37,6 +135,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  button: {
+    marginTop: 10,
+    marginBottom: 20,
+    backgroundColor: "#284785",
+    padding: 7,
+    maxWidth: 70,
+    alignItems: "center",
+  },
+  error: {
+    color: "red",
+    fontWeight: "300",
+    marginBottom: 5,
+    fontSize: 12,
   },
 });
 

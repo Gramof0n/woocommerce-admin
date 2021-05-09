@@ -3,7 +3,7 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from "@react-navigation/drawer";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Coupons from "./Coupons";
 import Products from "./Products";
@@ -12,13 +12,19 @@ import IconFont from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CustomDrawer } from "../components/CustomDrawer";
 import { useFocusEffect } from "@react-navigation/core";
+import { categoriesArray } from "../utils/mapCategoriesToArray";
 
 type Props = DrawerContentComponentProps<DrawerContentOptions> & {};
 
 const Home = (props: Props) => {
+  useEffect(() => {
+    isLoggedIn();
+  }, []);
   useFocusEffect(
     React.useCallback(() => {
-      return () => isLoggedIn();
+      return () => {
+        isLoggedIn();
+      };
     }, [isLoggedIn])
   );
 

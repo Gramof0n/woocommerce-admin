@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
@@ -6,6 +7,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import FloatingButton from "../components/FloatingButton";
 import ProductDisplay from "../components/ProductDisplay";
 import { get } from "../utils/apiCalls";
+import { categoriesArray } from "../utils/mapCategoriesToArray";
 
 type Props = DrawerContentComponentProps & {};
 
@@ -17,6 +19,7 @@ const Products = (props: Props) => {
       setIsLoading(true);
       console.log("Report");
       getProducts();
+      setCategories();
     }, [])
   );
 
@@ -25,6 +28,10 @@ const Products = (props: Props) => {
     setIsLoading(false);
     console.log("Duzina res " + res?.data.length);
     setProducts(res?.data);
+  }
+
+  async function setCategories() {
+    AsyncStorage.setItem("categories", JSON.stringify(await categoriesArray()));
   }
   return (
     <View style={{ flex: 1 }}>
@@ -41,7 +48,10 @@ const Products = (props: Props) => {
                   key={index}
                   name={product.name}
                   source={{
-                    uri: product.images[0].src,
+                    uri:
+                      typeof product.images[0].src === "undefined"
+                        ? "http://www.cre8a.biz/images/shop/placeholder-product-image-500x500.png"
+                        : product.images[0].src,
                     width: 200,
                     height: 200,
                   }}

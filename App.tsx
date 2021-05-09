@@ -26,7 +26,7 @@ export default function App() {
         <Stack.Screen
           name="AddProduct"
           component={AddProduct}
-          options={{ headerShown: true }}
+          options={{ headerShown: true, title: "Add a product" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
