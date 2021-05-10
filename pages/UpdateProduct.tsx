@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import ComboBox from "../components/ComboBox";
 import InputField from "../components/InputField";
@@ -30,6 +31,7 @@ type Props = DrawerContentComponentProps<DrawerContentOptions> & {
 
 const UpdateProduct = (props: Props) => {
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const product = props.route.params.product;
 
   console.log("ID " + product.id);
@@ -53,6 +55,7 @@ const UpdateProduct = (props: Props) => {
           images: product.images,
         }}
         onSubmit={async (values, { setErrors }) => {
+          setIsLoading(true);
           let good = true;
           if (values.name === "") {
             setErrors({ name: "Name must not be empty" });
@@ -67,6 +70,7 @@ const UpdateProduct = (props: Props) => {
 
           if (good) {
             const res = await update(`products/${product.id}`, values);
+            setIsLoading(false);
             if (Platform.OS === "android") {
               ToastAndroid.show("Successfully updated", ToastAndroid.SHORT);
             }
@@ -140,7 +144,11 @@ const UpdateProduct = (props: Props) => {
                 handleSubmit();
               }}
             >
-              <Text style={{ color: "white" }}>Update</Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text style={{ color: "white" }}>Update</Text>
+              )}
             </TouchableOpacity>
           </View>
         )}

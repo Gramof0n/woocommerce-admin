@@ -55,8 +55,8 @@ const ProductDetails = (props: Props) => {
         right={15}
         onPress={() => {
           Alert.alert(
-            "Delte item",
-            "Are you sure you want to delete this item?",
+            "Delte product",
+            "Are you sure you want to delete this product?",
             [
               {
                 text: "Yes",

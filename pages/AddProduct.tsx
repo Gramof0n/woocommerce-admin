@@ -6,7 +6,14 @@ import {
 } from "@react-navigation/drawer";
 import { Formik } from "formik";
 import React, { useCallback, useState } from "react";
-import { Text, View, StyleSheet, ToastAndroid, Platform } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ToastAndroid,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import ComboBox from "../components/ComboBox";
 import InputField from "../components/InputField";
@@ -16,6 +23,7 @@ type Props = DrawerContentComponentProps<DrawerContentOptions> & {};
 
 const AddProduct = (props: Props) => {
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   useFocusEffect(
     useCallback(() => {
       AsyncStorage.getItem("categories").then((res) => {
@@ -42,6 +50,7 @@ const AddProduct = (props: Props) => {
           ],
         }}
         onSubmit={async (values, { setErrors }) => {
+          setIsLoading(true);
           let good = true;
           if (values.name === "") {
             setErrors({ name: "Name must not be empty" });
@@ -57,6 +66,7 @@ const AddProduct = (props: Props) => {
           if (good) {
             console.log(values);
             const res = await post("products", values);
+            setIsLoading(false);
             if (Platform.OS === "android") {
               ToastAndroid.show("Successfully added", ToastAndroid.SHORT);
             }
@@ -128,7 +138,11 @@ const AddProduct = (props: Props) => {
                 handleSubmit();
               }}
             >
-              <Text style={{ color: "white" }}>Add</Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text style={{ color: "white" }}>Add</Text>
+              )}
             </TouchableOpacity>
           </View>
         )}

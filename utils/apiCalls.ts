@@ -28,7 +28,7 @@ export const get = async (path: string) => {
 
     const oauth = getOAuth().authorize(request);
 
-    const res = axios.get(request.url, {
+    const res = await axios.get(request.url, {
       params: oauth,
     });
     return res;
@@ -47,7 +47,7 @@ export const post = async (path: string, body: object): Promise<boolean> => {
 
     const oauth = getOAuth().authorize(request);
 
-    axios.post(request.url, body, {
+    await axios.post(request.url, body, {
       params: oauth,
     });
     return true;
@@ -67,7 +67,7 @@ export const remove = async (path: string) => {
 
     const oauth = getOAuth().authorize(request);
 
-    axios.delete(request.url, {
+    await axios.delete(request.url, {
       params: oauth,
     });
     return true;
@@ -87,7 +87,7 @@ export const update = async (path: string, body: object): Promise<boolean> => {
 
     const oauth = getOAuth().authorize(request);
 
-    axios.put(request.url, body, {
+    await axios.put(request.url, body, {
       params: oauth,
     });
     return true;
